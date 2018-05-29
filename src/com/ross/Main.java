@@ -4,7 +4,7 @@
 * Ross van der Heyde
 * 21 May 2018*/
 
-package com.company;
+package com.ross;
 
 import java.io.File;
 import java.io.FileNotFoundException;

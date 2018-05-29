@@ -2,7 +2,7 @@
  * Ross van der Heyde
  * 22 May 2018
  * */
-package com.company;
+package com.ross;
 
 /**
  * Param is a class representing a parameter of a stored function or procedure.
@@ -33,31 +33,65 @@ public class Param {
         this.description = description;
     }
 
+    /**
+     * Returns the type of this <code>{@link Param }</code>
+     *
+     * @return Param type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Set the type of this <code>{@link Param }</code>
+     *
+     * @param type Param type
+     */
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     * Returns the name of this <code>{@link Param}</code>
+     *
+     * @return Param name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set the name of this <code>{@link Param}</code> * @param name Param name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Return the description of this <code>{@link Param}</code>.
+     *
+     * @return String Param description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Set the description of this <code>{@link Param}</code>.
+     *
+     * @param description String Param description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
 
+    /**
+     * Returns a <code>String</code> representation of this
+     * <code>{@link Param}</code>
+     *
+     * @return String representation
+     */
     @Override
     public String toString() {
         return "Param{" +
