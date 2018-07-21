@@ -100,4 +100,23 @@ public class Param {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    /**
+     * Creates a <code>{@link Param}</code> object from the given
+     * <code>String</code>. The String is assumed to be of the form "@param
+     * <TYPE> <NAME> <DESCRIPTION>", i.e. as it is in a MySQL DocComment.
+     *
+     * @param line String to be parsed into a <code>{@link Param}</code>
+     * @return a new {@link Param} object
+     */
+    public static Param parseParam(String line) {
+        Param param = new Param();
+
+        String[] temp = line.split(" ", 4);
+        param.setType(temp[1]);
+        param.setName(temp[2]);
+        param.setDescription(temp[3]);
+
+        return param;
+    }
 }

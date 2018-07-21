@@ -12,16 +12,18 @@ import java.util.ArrayList;
  * very similar to a JavaDoc comment.
  */
 public class DocComment {
+    private String name;
     private String description;
     private ArrayList<Param> params;
     private ArrayList<Column> cols;
-    private Return ret;
+    private Return ret = null;
 
     /**
      * Default DocComment constructor
      */
     public DocComment() {
-
+        params = new ArrayList<>();
+        cols = new ArrayList<>();
     }
 
     /**
@@ -59,7 +61,7 @@ public class DocComment {
      * @param description String with description of the function/procedure
      */
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description.replace("/**", "");
     }
 
     /**
@@ -109,7 +111,7 @@ public class DocComment {
      *
      * @return Return object specified by the stored function
      */
-    public Return getRet() {
+    public Return getReturn() {
         return ret;
     }
 
@@ -118,7 +120,39 @@ public class DocComment {
      *
      * @param ret <code>Return</code> object specified by the stored function
      */
-    public void setRet(Return ret) {
+    public void setReturn(Return ret) {
         this.ret = ret;
+    }
+
+    /**
+     * Returns the name of the function or procedure that this
+     * <code>{@link DocComment}</code> documents.
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the name of the function or procedure that this * <code>{@link
+     * DocComment}</code> documents.
+     *
+     * @param name Name of the function or procedure
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns a <code>String</code> representatio of this <code>{@link
+     * DocComment}</code>
+     *
+     * @retun String representing this {@link DocComment}
+     */
+    public String toString() {
+        return name + ": " + description + ".\n Params: " + params.toString() +
+                "\n" + (ret != null ? ret.toString() :
+                "Columns: " + cols.toString());
     }
 }

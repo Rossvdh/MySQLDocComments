@@ -81,4 +81,23 @@ public class Return {
                 ", description='" + description + '\'' +
                 '}';
     }
+
+    /**
+     * Creates a <code>Return</code> object from the given
+     * <code>String</code>. The String is assumed to be of the form "@return
+     * <TYPE> <DESCRIPTION>", i.e. as it is in a MySQL DocComment.
+     *
+     * @param line String to be parsed into a <code>{@link Return}</code>
+     * @return a new {@link Return} object
+     */
+    public static Return parseReturn(String line) {
+        Return ret = new Return();
+
+        String[] temp = line.split(" ", 3);
+
+        ret.setType(temp[1]);
+        ret.setDescription(temp[2]);
+
+        return ret;
+    }
 }

@@ -111,4 +111,61 @@ public class Column {
                 ", alias='" + alias + '\'' +
                 '}';
     }
+
+    /**
+     * Creates a <code>{@link Column}</code> object from the given
+     * <code>String</code>. The String is assumed to be of the one of the
+     * forms:
+     * "@col <TABLE>.<COLNAME> as <ALIAS>" "@col <TABLE>.<COLNAME>" "@col
+     * <COLUMNNAME> as <ALIAS>" "@col <COLUMNNAME>" i.e. as it is in a MySQL
+     * DocComment.
+     *
+     * @param line String to be parsed into a <code>{@link Column}</code>
+     * @return a new {@link Column} object
+     */
+    public static Column parseColumn(String line) {
+        Column col = new Column();
+
+        String[] temp = line.split(" ");
+
+        int len = temp.length;
+        if (len == 2) {
+            if (temp[1].contains(".")) {
+                //"@col <TABLE>.<COLNAME>"
+
+                String[] temp2 = temp[1].split(".");
+
+                col.setTable(temp2[0]);
+                col.setName(temp2[1]);
+            } else {
+                //"@col <COLUMNNAME>"
+                col.setName(temp[1]);
+            }
+
+        } else if (len == 4) {
+            /*System.out.println("-----");
+            for (String s:temp ) {
+                System.out.println(s);
+            }
+            System.out.println("-----");*/
+
+            if (temp[1].contains(".")) {
+                //"@col <TABLE>.<COLNAME> as <ALIAS>"
+                String[] temp2 = temp[1].split("\\.");
+
+                col.setTable(temp2[0]);
+                col.setName(temp2[1]);
+                col.setAlias(temp[3]);
+            } else {
+                //"@col <COLUMNNAME> as <ALIAS>"
+                col.setName(temp[1]);
+                col.setAlias(temp[3]);
+            }
+        } else {
+            System.out.println("Error in Column.parseColumn: invalid temp " +
+                    "array length.");
+        }
+
+        return col;
+    }
 }

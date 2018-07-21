@@ -8,8 +8,8 @@
 /**
 Returns an int with the ID number of the series that the given book is in
 @param INT bookID ID number of the book
-@returns INT ID number of the book's series
-*/
+@return INT ID number of the book's series
+*/ --"*/" must be on new line
 DELIMITER ;;
 CREATE DEFINER=`Ross`@`%` FUNCTION `GetSeriesID`(bookID INT) RETURNS int(11)
 	BEGIN
@@ -35,7 +35,7 @@ CREATE DEFINER=`Ross`@`%` FUNCTION `IsFiction`(idNum INT) RETURNS int(11)
 
 /**
 Adds an Author with the given name to the Authors table. Automatically inserts an ID number
-@param VARCHAR(100) the author's full name
+@param VARCHAR(100) name the author's full name
 */
 DELIMITER ;;
 CREATE DEFINER=`Ross`@`%` PROCEDURE `addAuthor`(nam VARCHAR(100))
@@ -47,7 +47,11 @@ CREATE DEFINER=`Ross`@`%` PROCEDURE `addAuthor`(nam VARCHAR(100))
 /**
 Returns the books with which the given Author has a role
 @param Int author the Author's ID number
-@col AllBooks.id as bookID, title, Authors.id as authorID, name, role
+@col AllBooks.id as bookID
+@col title
+@col Authors.id as authorID
+@col name
+@col role
 */
 DELIMITER ;;
 CREATE DEFINER=`Ross`@`%` PROCEDURE `searchAuthorID`(author INT)
@@ -61,7 +65,11 @@ CREATE DEFINER=`Ross`@`%` PROCEDURE `searchAuthorID`(author INT)
 Returns the books bought after the given date. After such that mnth > m, and yr >= y
 @param INT m minimum month
 @param INT y minimum yr
-@col title, author, price, mnth, yr
+@col title
+@col author
+@col price
+@col mnth
+@col yr
 */
 DELIMITER ;;
 CREATE DEFINER=`Ross`@`localhost` PROCEDURE `searchDateGreater`(m INT, y INT)
