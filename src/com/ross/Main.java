@@ -8,6 +8,8 @@ package com.ross;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -54,17 +56,66 @@ public class Main {
                     docCommentLines.add(line);
                 }
             }
+            System.out.println("Done");
 
             //now output docComments to HTML file
-            System.out.print("Done\nOutputting to HTML file ...\n");
-            for (DocComment comment : docComments) {
-                System.out.println(comment.toString() + "\n");
-            }
-            System.out.println("Done");
+            outputToHTML(docComments);
+
         } catch (FileNotFoundException fnf) {
             System.out.println("The file " + fileName + " could not be found.");
             System.exit(0);
         }
+    }
+
+    /**
+     * Outputs the docComments to an HTML file.
+     * @param docComments ArrayList of <code>{@link DocComment}</code>s to
+     *                    output
+     */
+    private static void outputToHTML(ArrayList<DocComment> docComments) {
+        System.out.print("Outputting to HTML file ...\n");
+
+        //open file
+        File outFileName;
+        FileWriter outFile;
+        try {
+            outFileName = new File("testOutput.html");
+            outFile = new FileWriter(outFileName);
+
+            //put this stuff in a template file to be read from and written
+            // to out file
+            outFile.write("<html>\n");
+            outFile.write("\t<head>\n");
+            outFile.write("\t\t<title>Example output</title>\n");
+            outFile.write("\t\t<link rel='stylesheet' type='text/css' href='./style.css'>\n");
+            outFile.write("\t</head>\n");
+            outFile.write("\t<body>\n");
+            outFile.write("\t\t<h1>Documentation for stored functions and procedures in library database</h1>\n");
+            outFile.write("\t\t<table class=\"tableClass\">\n");
+            outFile.write("\t\t\t<tr>\n");
+            outFile.write("\t\t\t\t<th>Return</th>\n");
+            outFile.write("\t\t\t\t<th><b>Name<b></th>\n");
+            outFile.write("\t\t\t\t<th>Parameters</th>\n");
+            outFile.write("\t\t\t</tr>\n");
+
+            for (DocComment comment : docComments) {
+                comment.outputBrief(outFile);
+            }
+
+            outFile.write("\t\t</table>");
+            outFile.write("\t</body>\n");
+            outFile.write("</html>\n");
+
+            outFile.close();
+            outFile.close();
+
+        }catch (FileNotFoundException fnf){
+            System.out.println("Output file not found");
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }
+
+        System.out.println("Done");
     }
 
     /**
