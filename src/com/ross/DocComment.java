@@ -4,6 +4,8 @@
  */
 package com.ross;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -154,5 +156,58 @@ public class DocComment {
         return name + ": " + description + ".\n Params: " + params.toString() +
                 "\n" + (ret != null ? ret.toString() :
                 "Columns: " + cols.toString());
+    }
+
+    /**
+     * Writes the brief version of this <code>{@link DocComment}</code> to the
+     * given file output stream. The brief version is an HTML table row element
+     * with 3 table data entries: return, name, parameters
+     *
+     * @param outFile FileWrite which writes output
+     */
+    public void outputBrief(FileWriter outFile) {
+        /*
+        <tr>
+            <th>Return</th>
+            <th>Name</th>
+            <th>Parameters</th>
+         </tr>*/
+        try {
+            outFile.write("<tr>\n");
+            outFile.write("\t<td>");
+            if (ret != null) {
+                outFile.write(ret.getType() + "</td>\n");
+            } else {
+                outFile.write("<i>columns</i></td>\n");
+            }
+
+            outFile.write("<td><b>" + name + "</b></td>");
+
+            outFile.write("<td>");
+            for (int i = 0; i < params.size(); i++) {
+                if (i != params.size() - 1) {
+                    outFile.write(params.get(i).getType() + " " + params.get(i).getName() + ", ");
+                } else {
+                    //last one
+                    outFile.write(params.get(i).getType() + " " + params.get(i).getName());
+                }
+            }
+            outFile.write("</td>\n");
+
+            outFile.write("</tr>\n");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Writes the complete version of this <code>{@link DocComment}</code> to
+     * the given file output stream.
+     *
+     * @param outFile FileWrite which writes output
+     */
+    public void outputCompltete(FileWriter outFile) {
+
     }
 }

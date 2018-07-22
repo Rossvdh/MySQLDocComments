@@ -1,0 +1,89 @@
+<!doctype html>
+<!-- HTML output example for MySQL DocComments
+Ross van der Heyde
+22 July 2018. Proteas getting a beating in SL -->
+<html>
+<head>
+    <title>Example output</title>
+    <link rel='stylesheet' type='text/css' href='./style.css'>
+</head>
+<body>
+<h1>Documentation for stored functions and procedures in library database</h1>
+
+<p>This is a paragraph.</p>
+<p>This is another paragraph.</p>
+
+<!-- a table with brief details of each -->
+<table class="tableClass">
+    <tr>
+        <th>Return</th>
+        <th>Name</th>
+        <th>Parameters</th>
+    </tr>
+    <tr>
+        <td>INT</td>
+        <td><b>IsFiction</b></td>
+        <td>INT idNum</td>
+    </tr>
+    <tr>
+        <td>columns</td>
+        <td><b>searchDateGreater</b></td>
+        <td>INT m, INT y<br></td>
+    </tr>
+</table>
+
+<!-- now the full details of each -->
+<p>---------------------------------------------</p>
+<div class="test">
+    <!-- Function -->
+    <h6>Name</h6>
+    <p>description</p>
+
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <th>Name</th>
+            <th><b>Type</b></th>
+            <th>Description</th>
+        </tr>
+    </table>
+
+    <p>Returns: Type, description</p>
+</div>
+<p>---------------------------------------------</p>
+
+<div class="test1">
+    <!-- Procedure -->
+    <h6>Name</h6>
+    <p>description</p>
+
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <th>Name</th>
+            <th><b>Type</b></th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <th><b>Type</b></th>
+            <th>Description</th>
+        </tr>
+    </table>
+
+    <p>Column set</p>
+
+    <table class="columns">
+        <tr>
+            <td>Name</td>
+            <td>Name as Alias</td>
+            <td>Table.Name</td>
+            <td>Table.Name as Alias</td>
+        </tr>
+    </table>
+</div>
+
+<p>---------------------------------------------</p>
+
+</body>
+</html>
