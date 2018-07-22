@@ -1,15 +1,22 @@
+<!doctype html>
 <html>
-<head>
-    <title>Example output</title>
+<head><title>Test output</title>
     <link rel='stylesheet' type='text/css' href='./style.css'>
 </head>
-<body>
-<h1>Documentation for stored functions and procedures in library database</h1>
+<body><h1>Documentation for stored functions and procedures in library
+    database</h1>
+<p>This is a paragraph.</p>
+<p>This is another paragraph.</p>    <!-- a table with brief details of each -->
 <table class="tableClass">
     <tr>
         <th>Return</th>
-        <th><b>Name<b></th>
+        <th>Name</th>
         <th>Parameters</th>
+    </tr>
+    <tr>
+        <td>INT</td>
+        <td><b>GetSeriesID</b></td>
+        <td>INT bookID</td>
     </tr>
     <tr>
         <td>int</td>
@@ -31,6 +38,93 @@
         <td><b>searchDateGreater</b></td>
         <td>INT m, INT y</td>
     </tr>
-</table>
+</table>    <!-- now the full details of each -->
+<div class="test0"><!-- Function --><h6>GetSeriesID</h6>
+    <p>Returns an int with the ID number of the series that the given book is
+        in</p>
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <td>bookID</td>
+            <td><b>INT</b></td>
+            <td>ID number of the book</td>
+        </tr>
+    </table>
+    <p>Returns: INT, ID number of the book's series</p></div>
+<div class="test1"><!-- Function --><h6>IsFiction</h6>
+    <p>Returns 1 if the given Book is in the Fiction table, 0 otherwise</p>
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <td>idNum</td>
+            <td><b>Int</b></td>
+            <td>ID number of the Book</td>
+        </tr>
+    </table>
+    <p>Returns: int, 1 if the book is Fiction, 0 otherwise.</p></div>
+<div class="test0"><!-- Procedure--><h6>addAuthor</h6>
+    <p>Adds an Author with the given name to the Authors table. Automatically
+        inserts an ID number</p>
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <td>name</td>
+            <td><b>VARCHAR(100)</b></td>
+            <td>the author's full name</td>
+        </tr>
+    </table>
+    <p>Column set</p>
+    <table class="columns">
+        <tr></tr>
+    </table>
+</div>
+<div class="test1"><!-- Procedure--><h6>searchAuthorID</h6>
+    <p>Returns the books with which the given Author has a role</p>
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <td>author</td>
+            <td><b>Int</b></td>
+            <td>the Author's ID number</td>
+        </tr>
+    </table>
+    <p>Column set</p>
+    <table class="columns">
+        <tr>
+            <td>id</td>
+            <td>title</td>
+            <td>id</td>
+            <td>name</td>
+            <td>role</td>
+        </tr>
+    </table>
+</div>
+<div class="test0"><!-- Procedure--><h6>searchDateGreater</h6>
+    <p>Returns the books bought after the given date. After such that mnth > m,
+        and yr >= y</p>
+    <p>Parameters</p>
+    <table class="tableClass">
+        <tr>
+            <td>m</td>
+            <td><b>INT</b></td>
+            <td>minimum month</td>
+        </tr>
+        <tr>
+            <td>y</td>
+            <td><b>INT</b></td>
+            <td>minimum yr</td>
+        </tr>
+    </table>
+    <p>Column set</p>
+    <table class="columns">
+        <tr>
+            <td>title</td>
+            <td>author</td>
+            <td>price</td>
+            <td>mnth</td>
+            <td>yr</td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>

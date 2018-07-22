@@ -61,6 +61,8 @@ public class Main {
             //now output docComments to HTML file
             outputToHTML(docComments);
 
+            //TODO: formatting and styling of HTML
+
         } catch (FileNotFoundException fnf) {
             System.out.println("The file " + fileName + " could not be found.");
             System.exit(0);
@@ -69,6 +71,7 @@ public class Main {
 
     /**
      * Outputs the docComments to an HTML file.
+     *
      * @param docComments ArrayList of <code>{@link DocComment}</code>s to
      *                    output
      */
@@ -76,42 +79,69 @@ public class Main {
         System.out.print("Outputting to HTML file ...\n");
 
         //open file
-        File outFileName;
         FileWriter outFile;
         try {
-            outFileName = new File("testOutput.html");
-            outFile = new FileWriter(outFileName);
+            //open template file
+            Scanner templateIn = new Scanner(new File("template.html"));
+            ArrayList<String> templateLines = new ArrayList<>();
 
-            //put this stuff in a template file to be read from and written
-            // to out file
-            outFile.write("<html>\n");
-            outFile.write("\t<head>\n");
-            outFile.write("\t\t<title>Example output</title>\n");
-            outFile.write("\t\t<link rel='stylesheet' type='text/css' href='./style.css'>\n");
-            outFile.write("\t</head>\n");
-            outFile.write("\t<body>\n");
-            outFile.write("\t\t<h1>Documentation for stored functions and procedures in library database</h1>\n");
-            outFile.write("\t\t<table class=\"tableClass\">\n");
-            outFile.write("\t\t\t<tr>\n");
-            outFile.write("\t\t\t\t<th>Return</th>\n");
-            outFile.write("\t\t\t\t<th><b>Name<b></th>\n");
-            outFile.write("\t\t\t\t<th>Parameters</th>\n");
-            outFile.write("\t\t\t</tr>\n");
+            while (templateIn.hasNext()) {
+                templateLines.add(templateIn.nextLine());
+            }
+            templateIn.close();
 
+            //write out to output file until <!--##
+            int startAt = 0;
+            outFile = new FileWriter(new File("testOutput.html"));
+
+            for (String line : templateLines) {
+                startAt++;
+                if (!line.startsWith("<!--#")) {
+                    outFile.write(line);
+                } else {
+                    break;
+                }
+
+            }
+            System.out.println("after first part of template: startAt: " + startAt);
+
+            //write brief output
             for (DocComment comment : docComments) {
                 comment.outputBrief(outFile);
             }
 
-            outFile.write("\t\t</table>");
-            outFile.write("\t</body>\n");
-            outFile.write("</html>\n");
+            //write from template
+            for (int i = startAt; i < templateLines.size(); i++) {
+                startAt++;
+                String line = templateLines.get(i);
+                if (!line.startsWith("<!--#")) {
+                    outFile.write(line);
+//                    startAt++;
+                } else {
+                    break;
+                }
+
+            }
+            System.out.println("after middle part of template: startAt: " +
+                    startAt);
+
+            ///write complete output
+            int divClass = 0;
+            for (DocComment comment : docComments) {
+                comment.outputComplete(outFile, divClass);
+                divClass++;
+            }
+
+            //write last part of template
+            for (int i = startAt; i < templateLines.size(); i++) {
+                outFile.write(templateLines.get(i));
+            }
 
             outFile.close();
-            outFile.close();
 
-        }catch (FileNotFoundException fnf){
+        } catch (FileNotFoundException fnf) {
             System.out.println("Output file not found");
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 

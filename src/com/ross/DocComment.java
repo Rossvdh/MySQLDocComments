@@ -207,7 +207,66 @@ public class DocComment {
      *
      * @param outFile FileWrite which writes output
      */
-    public void outputCompltete(FileWriter outFile) {
+    public void outputComplete(FileWriter outFile, int divClass) {
+        try {
+            outFile.write("<div class=\"test" + (divClass % 2) + "\">");
+            if (isFunction()) {
+                outFile.write("<!-- Function -->");
+            } else {
+                outFile.write("<!-- Procedure-->");
+            }
 
+            outFile.write("<h6>" + name + "</h6>");
+            outFile.write("<p>" + description + "</p>");
+
+            outFile.write("<p>Parameters</p>");
+            outFile.write("<table class=\"tableClass\">");
+
+
+            //write out parameters
+            for (Param p : params) {
+                outFile.write("<tr>");
+                outFile.write("<td>" + p.getName() + "</td>");
+                outFile.write("<td><b>" + p.getType() + "</b></td>");
+                outFile.write("<td>" + p.getDescription() + "</td>");
+                outFile.write("</tr>");
+            }
+            outFile.write("</table>");
+
+            //return or columns
+            if (isFunction()) {
+                outFile.write("<p>Returns: " + ret.getType() + ", " + ret
+                        .getDescription() + "</p>");
+
+            } else {
+                //is procedure, so columns
+                outFile.write("<p>Column set</p>");
+
+                outFile.write("<table class=\"columns\">");
+                outFile.write("<tr>");
+
+                for (Column c : cols) {
+                    outFile.write("<td>" + c.getName() + "</td>");
+                }
+                        /*<td>Name as Alias</td>
+                        <td>Table.Name</td>
+                        <td>Table.Name as Alias</td>*/
+                outFile.write("</tr>");
+                outFile.write("</table>");
+            }
+            outFile.write("</div>");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns true if the stored proc documented by this <code>{@link
+     * DocComment}</code> is a function
+     *
+     * @return true if it is a function
+     */
+    public boolean isFunction() {
+        return ret != null;
     }
 }
