@@ -80,12 +80,13 @@ CREATE DEFINER=`Ross`@`localhost` PROCEDURE `searchDateGreater`(m INT, y INT)
 	DELIMITER ;
 
 /**
-Adds an TEST with the given name to the Authors table. Automatically inserts an
-ID number MORE TEST
+Adds an NEW SPROC with the given name to the Authors table. Automatically
+inserts an
+ID number  BECUASE AUTONUM
 @param VARCHAR(100) name the author's full name
 */
 DELIMITER ;;
-CREATE DEFINER=`Ross`@`%` PROCEDURE `testSproc`(nam VARCHAR(100))
+CREATE DEFINER=`Ross`@`%` PROCEDURE `testSprocAGAIN`(nam VARCHAR(100))
 	BEGIN
 	INSERT INTO Authors (name) VALUES (nam);
 	END ;;

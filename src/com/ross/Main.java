@@ -19,70 +19,152 @@ public class Main {
      * @param args name of the .sql file to parse
      */
     public static void main(String[] args) {
-        String inputFileName = args[0];
-        System.out.println("file to parse: " + inputFileName);
 
-        String outputFileName = args[1];
-        System.out.println("Output file name: " + outputFileName);
+        //parse args
+        String sqlFileName = null;
+        String commentFileName = "docCommentOutput.sql";
+        String htmlFileName = "docOutput.html";
 
-        ArrayList<DocComment> docComments = new ArrayList<>();
-
-        try {
-            System.out.print("Opening file . . .");
-            Scanner inFile = new Scanner(new File(inputFileName));
-            System.out.println("Done");
-
-            System.out.println("Parsing comments . . .");
-            int count = 0;
-            boolean addToComment = false;
-            ArrayList<String> docCommentLines = new ArrayList<>();
-
-            while (inFile.hasNext()) {
-                String line = inFile.nextLine();
-
-                if (line.trim().startsWith("/**")) {
-                    //start of new doc comment
-                    docCommentLines = new ArrayList<>();
-                    addToComment = true;
-                } else if (line.contains("*/")) {
-                    //end of doc comment
-                    addToComment = false;
-
-                    //consume "DELIMITER ;;" line
-                    inFile.nextLine();
-                    //consume declaration line
-                    String nameLine = inFile.nextLine();
-
-                    DocComment comment = DocComment.parseLines(docCommentLines,
-                            nameLine);
-                    docComments.add(comment);
-
-                    count++;
-                    System.out.println("\t" + count + " " + comment.getName());
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "-sql":
+                case "-s": {
+                    //next is the .sql fileName
+                    i++;
+                    sqlFileName = args[i];
+                    break;
                 }
-
-                //add line to current comment
-                if (addToComment) {
-                    docCommentLines.add(line);
+                case "-comments":
+                case "-c": {
+                    //next is comments fileName
+                    i++;
+                    commentFileName = args[i];
+                    break;
+                }
+                case "-html":
+                case "-h": {
+                    //next is html fileName
+                    i++;
+                    htmlFileName = args[i];
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid option: " + args[i]);
+                    System.exit(-1);
                 }
             }
-            System.out.println("Done");
+        }
 
-            //now output docComments to HTML file
-            outputToHTML(docComments, outputFileName);
+        if (sqlFileName == null) {
+            /*main -comments fileWithComments.sql -html file.html
+            takes fileWithComments (which MUST have docComments) and output file.html with HTML docs*/
 
-        } catch (FileNotFoundException fnf) {
-            System.out.println("The file " + inputFileName + " could not be found.");
-            System.exit(0);
+            ArrayList<DocComment> docComments = parseDocComments(commentFileName);
+
+            //generate HTML
+            //write HTML to htmlFileName
+            outputToHTML(docComments, htmlFileName);
+
+
+        } else if (commentFileName.equals("docCommentOutput.sql")) {
+            /*main -sql file.sql -html file.html
+            takes file.sql (which has sproc code (docComments or not)) and output file.html with HTML docs.
+            (generates docComments for those who don't have)*/
+
+            //read from sqlFileName
+            //parse SQL into Sprocs
+            //generate DocComments (for those Sprocs where it is necessary)
+            //generate HTML
+            //write HTML to htmlFileName
+            System.err.println("Not supported yet");
+        } else if (htmlFileName.equals("docOutput.html")) {
+            /*main -sql file.sql -comments fileWithComments.sql
+            takes file.sql (which has sproc code (docComments or not)) and output fileWithComments.sql with docComments for all sprocs*/
+
+            //read from sqlFileName
+            //parse SQL into Sprocs
+            //generate DocComments (for those Sprocs where it is necessary)
+            //write DocComments to commentFileName
+            System.err.println("Not supported yet");
+        } else {
+            /*main -sql file.sql -comments fileWithComments.sql -html file.html
+            takes file.sql (which has sproc code (docComments or not)) and output fileWithComments.sql with docComments for all sprocs,
+            and outputs file.html with HTML docs*/
+
+            //read sqlFileName
+            //parse SQL into Sprocs
+            //generate DocComments (for those Sprocs where it is necessary)
+            //write DocComments to commentFileName
+            //generate HTML
+            //write HTML to htmlFileName
+            System.err.println("Not supported yet");
         }
     }
 
+    /**
+     * Reads from the .sql file with comments and parses the text into
+     * <code>{@link DocComment}</code>s
+     */
+    public static ArrayList<DocComment> parseDocComments(String commentFileName) {
+        ArrayList<DocComment> docComments = new ArrayList<>();
+
+        //read from commentFileName
+        Scanner inFile = null;
+        try {
+            System.out.print("Opening file . . .");
+            inFile = new Scanner(new File(commentFileName));
+            System.out.println("Done");
+        } catch (FileNotFoundException fnf) {
+            System.out.println("The file '" + commentFileName + "' was not found");
+            System.exit(-1);
+        }
+
+        //parse DocComments
+        //(no docComments are generated from SQL)
+        System.out.println("Parsing comments . . .");
+        int count = 0;
+        boolean addToComment = false;
+        ArrayList<String> docCommentLines = new ArrayList<>();
+
+        while (inFile.hasNext()) {
+            String line = inFile.nextLine();
+
+            if (line.trim().startsWith("/**")) {
+                //start of new doc comment
+                docCommentLines = new ArrayList<>();
+                addToComment = true;
+            } else if (line.contains("*/")) {
+                //end of doc comment
+                addToComment = false;
+
+                //consume "DELIMITER ;;" line
+                inFile.nextLine();
+                //consume declaration line
+                String nameLine = inFile.nextLine();
+
+                DocComment comment = DocComment.parseLines(docCommentLines,
+                        nameLine);
+                docComments.add(comment);
+
+                count++;
+                System.out.println("\t" + count + " " + comment.getName());
+            }
+
+            //add line to current comment
+            if (addToComment) {
+                docCommentLines.add(line);
+            }
+        }
+        System.out.println("Done");
+
+        return docComments;
+    }
 
     /**
      * Outputs the docComments to an HTML file.
      *
-     * @param docComments ArrayList of <code>{@link DocComment}</code>s to
-     *                    output
+     * @param docComments    ArrayList of <code>{@link DocComment}</code>s to
+     *                       output
      * @param outputFileName name of the html file to write output to.
      */
     private static void outputToHTML(ArrayList<DocComment> docComments,
