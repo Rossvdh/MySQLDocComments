@@ -147,6 +147,16 @@ public class DocComment {
     }
 
     /**
+     * Returns true if the stored proc documented by this <code>{@link
+     * DocComment}</code> is a function
+     *
+     * @return true if it is a function
+     */
+    public boolean isFunction() {
+        return ret != null;
+    }
+
+    /**
      * Returns a <code>String</code> representatio of this <code>{@link
      * DocComment}</code>
      *
@@ -246,7 +256,7 @@ public class DocComment {
                     outFile.write("<tr>\n");
 
                     for (Column c : cols) {
-                        outFile.write("\t<td>" + c.getName() + "</td>\n");
+                        outFile.write("\t<td>" + c.toString() + "</td>\n");
                     }
                         /*<td>Name as Alias</td>
                         <td>Table.Name</td>
@@ -262,12 +272,66 @@ public class DocComment {
     }
 
     /**
-     * Returns true if the stored proc documented by this <code>{@link
-     * DocComment}</code> is a function
+     * Parses the given Strings into a <code>DocComment</code>. Returns the
+     * created <code>{@link DocComment}</code>
      *
-     * @return true if it is a function
+     * @param commentLines lines from file to parse into DocComment
+     * @param nameLine declaraion line from from with func/proc name
+     * @return the created <code>DocComment</code>
      */
-    public boolean isFunction() {
-        return ret != null;
+    public static DocComment parseLines(ArrayList<String> commentLines,
+                                        String nameLine) {
+        DocComment comment = new DocComment();
+
+        String name = "";
+        if (nameLine.contains("FUNCTION")) {
+            int nameStart = nameLine.indexOf("FUNCTION") + "FUNCTION ".length();
+            int nameEnd = nameLine.indexOf("(");
+
+            name = nameLine.substring(nameStart, nameEnd);
+
+        } else {
+            //PROCEDURE
+            int nameStart = nameLine.indexOf("PROCEDURE") + "PROCEDURE ".length();
+            int nameEnd = nameLine.indexOf("(");
+
+            name = nameLine.substring(nameStart, nameEnd);
+        }
+
+        name = name.replace("`", "");
+        name = name.replace("'", "");
+        name = name.replace("\"", "");
+        comment.setName(name);
+
+        String descrip = "";
+        for (String line : commentLines) {
+            String temp = line.trim();
+
+            if (temp.startsWith("@return")) {
+                //@return <TYPE> <DESCRIPTION>
+                Return ret = Return.parseReturn(temp);
+
+                comment.setReturn(ret);
+            } else if (temp.startsWith("@param")) {
+                //@param <TYPE> <NAME> <DESCRIPTION>
+                Param param = Param.parseParam(line);
+
+                comment.addParam(param);
+            } else if (temp.startsWith("@col")) {
+                //@col <TABLE>.<COLNAME> as <ALIAS>
+                //@col <TABLE>.<COLNAME>
+                //@col <COLUMNNAME> as <ALIAS>
+                //@col <COLUMNNAME>
+                Column col = Column.parseColumn(line);
+
+                comment.addColumn(col);
+            } else {
+                //assume part of description
+                descrip += temp;
+            }
+        }
+
+        comment.setDescription(descrip);
+        return comment;
     }
 }

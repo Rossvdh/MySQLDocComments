@@ -32,7 +32,7 @@ public class Main {
             Scanner inFile = new Scanner(new File(inputFileName));
             System.out.println("Done");
 
-            System.out.print("Parsing comments . . .");
+            System.out.println("Parsing comments . . .");
             int count = 0;
             boolean addToComment = false;
             ArrayList<String> docCommentLines = new ArrayList<>();
@@ -48,10 +48,17 @@ public class Main {
                     //end of doc comment
                     addToComment = false;
 
-                    docComments.add(parseLines(docCommentLines, inFile));
+                    //consume "DELIMITER ;;" line
+                    inFile.nextLine();
+                    //consume declaration line
+                    String nameLine = inFile.nextLine();
+
+                    DocComment comment = DocComment.parseLines(docCommentLines,
+                            nameLine);
+                    docComments.add(comment);
 
                     count++;
-                    System.out.print(count + " ");
+                    System.out.println("\t" + count + " " + comment.getName());
                 }
 
                 //add line to current comment
@@ -64,13 +71,12 @@ public class Main {
             //now output docComments to HTML file
             outputToHTML(docComments, outputFileName);
 
-            //TODO: formatting and styling of HTML
-
         } catch (FileNotFoundException fnf) {
             System.out.println("The file " + inputFileName + " could not be found.");
             System.exit(0);
         }
     }
+
 
     /**
      * Outputs the docComments to an HTML file.
@@ -134,7 +140,7 @@ public class Main {
             }
             System.out.println("Done");
 
-            ///write complete output
+            //write complete output
             System.out.print("\tWriting complete descriptions. . .");
             int divClass = 0;
             for (DocComment comment : docComments) {
@@ -160,72 +166,5 @@ public class Main {
         }
 
     }
-
-    /**
-     * Parses the given Strings into a <code>DocComment</code>. Returns the
-     * created <code>{@link DocComment}</code>
-     *
-     * @param lines lines from file to parse into DocComment
-     * @return the created <code>DocComment</code>
-     */
-    private static DocComment parseLines(ArrayList<String> lines, Scanner
-            inFile) {
-        DocComment comment = new DocComment();
-
-        inFile.nextLine();
-        String nameLine = inFile.nextLine();
-        String name = "";
-        if (nameLine.contains("FUNCTION")) {
-            int nameStart = nameLine.indexOf("FUNCTION") + "FUNCTION ".length();
-            int nameEnd = nameLine.indexOf("(");
-
-            name = nameLine.substring(nameStart, nameEnd);
-
-        } else {
-            //PROCEDURE
-            int nameStart = nameLine.indexOf("PROCEDURE") + "PROCEDURE ".length();
-            int nameEnd = nameLine.indexOf("(");
-
-            name = nameLine.substring(nameStart, nameEnd);
-        }
-
-        name = name.replace("`", "");
-        name = name.replace("'", "");
-        name = name.replace("\"", "");
-        comment.setName(name);
-
-        String descrip = "";
-        for (String line : lines) {
-            String temp = line.trim();
-
-            if (temp.startsWith("@return")) {
-                //@return <TYPE> <DESCRIPTION>
-                Return ret = Return.parseReturn(temp);
-
-                comment.setReturn(ret);
-            } else if (temp.startsWith("@param")) {
-                //@param <TYPE> <NAME> <DESCRIPTION>
-                Param param = Param.parseParam(line);
-
-                comment.addParam(param);
-            } else if (temp.startsWith("@col")) {
-                //@col <TABLE>.<COLNAME> as <ALIAS>
-                //@col <TABLE>.<COLNAME>
-                //@col <COLUMNNAME> as <ALIAS>
-                //@col <COLUMNNAME>
-                Column col = Column.parseColumn(line);
-
-                comment.addColumn(col);
-            } else {
-                //assume part of description
-                descrip += temp;
-            }
-        }
-
-        comment.setDescription(descrip);
-//        System.out.println("# " + comment);
-        return comment;
-    }
-
 
 }

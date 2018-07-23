@@ -42,6 +42,11 @@
         <td><b>searchDateGreater</b></td>
         <td>INT m, INT y</td>
     </tr>
+    <tr>
+        <td><i>columns</i></td>
+        <td><b>testSproc</b></td>
+        <td>VARCHAR(100) name</td>
+    </tr>
 
 </table>
 
@@ -104,9 +109,9 @@
     <p>Column set:</p>
     <table class="tableClass">
         <tr>
-            <td>id</td>
+            <td>AllBooks.id as bookID</td>
             <td>title</td>
-            <td>id</td>
+            <td>Authors.id as authorID</td>
             <td>name</td>
             <td>role</td>
         </tr>
@@ -138,6 +143,20 @@
             <td>price</td>
             <td>mnth</td>
             <td>yr</td>
+        </tr>
+    </table>
+</div>
+<div class="test1">
+    <!-- Procedure-->
+    <h4>testSproc</h4>
+    <p>Adds an TEST with the given name to the Authors table. Automatically
+        inserts anID number MORE TEST</p>
+    <p>Parameters:</p>
+    <table class="tableClass">
+        <tr>
+            <td>name</td>
+            <td><b>VARCHAR(100)</b></td>
+            <td>the author's full name</td>
         </tr>
     </table>
 </div>

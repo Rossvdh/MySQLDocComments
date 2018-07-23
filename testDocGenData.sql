@@ -1,3 +1,4 @@
+-- use this file for testing generation og HTML docs from docComments
 -- javadoc style comments for documentation have been added.
 -- a bunch of stuff inserted by mysqldump has been removed
 
@@ -75,5 +76,17 @@ DELIMITER ;;
 CREATE DEFINER=`Ross`@`localhost` PROCEDURE `searchDateGreater`(m INT, y INT)
 	BEGIN
 	SELECT title, author, price, mnth, yr FROM AllBooks WHERE (mnth > m AND yr >= y) OR yr > y;
+	END ;;
+	DELIMITER ;
+
+/**
+Adds an TEST with the given name to the Authors table. Automatically inserts an
+ID number MORE TEST
+@param VARCHAR(100) name the author's full name
+*/
+DELIMITER ;;
+CREATE DEFINER=`Ross`@`%` PROCEDURE `testSproc`(nam VARCHAR(100))
+	BEGIN
+	INSERT INTO Authors (name) VALUES (nam);
 	END ;;
 	DELIMITER ;

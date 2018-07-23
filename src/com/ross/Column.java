@@ -17,9 +17,9 @@ package com.ross;
  */
 public class Column {
 
-    private String name;
-    private String table;
-    private String alias;
+    private String name = null;
+    private String table = null;
+    private String alias = null;
 
     /**
      * Construct an empty <code>Column</code>
@@ -105,11 +105,19 @@ public class Column {
      */
     @Override
     public String toString() {
-        return "Column{" +
-                "name='" + name + '\'' +
-                ", table='" + table + '\'' +
-                ", alias='" + alias + '\'' +
-                '}';
+        String str = "";
+
+        if (table != null) {
+            str += table + ".";
+        }
+
+        str += name;
+
+        if (alias != null) {
+            str += " as " + alias;
+        }
+
+        return str;
     }
 
     /**
