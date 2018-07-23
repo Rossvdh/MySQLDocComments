@@ -181,7 +181,7 @@ public class DocComment {
                 outFile.write("<i>columns</i></td>\n");
             }
 
-            outFile.write("<td><b>" + name + "</b></td>");
+            outFile.write("\t<td><b>" + name + "</b></td>\n");
 
             outFile.write("<td>");
             for (int i = 0; i < params.size(); i++) {
@@ -209,52 +209,53 @@ public class DocComment {
      */
     public void outputComplete(FileWriter outFile, int divClass) {
         try {
-            outFile.write("<div class=\"test" + (divClass % 2) + "\">");
+            outFile.write("<div class=\"test" + (divClass % 2) + "\">\n");
             if (isFunction()) {
-                outFile.write("<!-- Function -->");
+                outFile.write("<!-- Function -->\n");
             } else {
-                outFile.write("<!-- Procedure-->");
+                outFile.write("<!-- Procedure-->\n");
             }
 
-            outFile.write("<h6>" + name + "</h6>");
-            outFile.write("<p>" + description + "</p>");
+            outFile.write("<h4>" + name + "</h4>\n");
+            outFile.write("<p>" + description + "</p>\n");
 
-            outFile.write("<p>Parameters</p>");
-            outFile.write("<table class=\"tableClass\">");
-
+            outFile.write("<p>Parameters:</p>\n");
+            outFile.write("<table class=\"tableClass\">\n");
 
             //write out parameters
             for (Param p : params) {
-                outFile.write("<tr>");
-                outFile.write("<td>" + p.getName() + "</td>");
-                outFile.write("<td><b>" + p.getType() + "</b></td>");
-                outFile.write("<td>" + p.getDescription() + "</td>");
+                outFile.write("<tr>\n");
+                outFile.write("\t<td>" + p.getName() + "</td>\n");
+                outFile.write("\t<td><b>" + p.getType() + "</b></td>\n");
+                outFile.write("\t<td>" + p.getDescription() + "</td>\n");
                 outFile.write("</tr>");
             }
-            outFile.write("</table>");
+            outFile.write("</table>\n");
 
             //return or columns
             if (isFunction()) {
                 outFile.write("<p>Returns: " + ret.getType() + ", " + ret
-                        .getDescription() + "</p>");
+                        .getDescription() + "</p>\n");
 
             } else {
                 //is procedure, so columns
-                outFile.write("<p>Column set</p>");
+                if (cols.size() > 0) {
+                    outFile.write("<p>Column set:</p>\n");
 
-                outFile.write("<table class=\"columns\">");
-                outFile.write("<tr>");
+                    outFile.write("<table class=\"tableClass\">\n");
+                    outFile.write("<tr>\n");
 
-                for (Column c : cols) {
-                    outFile.write("<td>" + c.getName() + "</td>");
-                }
+                    for (Column c : cols) {
+                        outFile.write("\t<td>" + c.getName() + "</td>\n");
+                    }
                         /*<td>Name as Alias</td>
                         <td>Table.Name</td>
                         <td>Table.Name as Alias</td>*/
-                outFile.write("</tr>");
-                outFile.write("</table>");
+                    outFile.write("</tr>\n");
+                    outFile.write("</table>\n");
+                }
             }
-            outFile.write("</div>");
+            outFile.write("</div>\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
