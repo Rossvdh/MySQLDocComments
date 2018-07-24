@@ -31,6 +31,13 @@ CREATE DEFINER=`Ross`@`%` PROCEDURE `addAuthor`(nam VARCHAR(100))
 	DELIMITER ;
 
 DELIMITER ;;
+CREATE DEFINER=`Ross`@`%` PROCEDURE `addBook`(tit VARCHAR(100), cost INT, shop INT, month INT, year INT, pub INT)
+	BEGIN
+	INSERT INTO AllBooks (title, price, placeBought, mnth, yr, firstpub) VALUES (tit, cost, shop, month, year, pub);
+	END ;;
+	DELIMITER ;
+
+DELIMITER ;;
 CREATE DEFINER=`Ross`@`%` PROCEDURE `searchAuthorID`(author INT)
 	BEGIN
 	SELECT B.id as bookID, title, A.id as authorID, name, role FROM AllBooks B, Roles R, Authors A, LinkBookAuthor L

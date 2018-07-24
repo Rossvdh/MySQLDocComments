@@ -19,7 +19,8 @@ public class Main {
      * @param args name of the .sql file to parse
      */
     public static void main(String[] args) {
-
+        System.out.println("SQL stored procedure and function documentation " +
+                "generator.");
         //parse args
         String sqlFileName = null;
         String commentFileName = "docCommentOutput.sql";
@@ -32,6 +33,7 @@ public class Main {
                     //next is the .sql fileName
                     i++;
                     sqlFileName = args[i];
+                    System.out.println("SQL file name: " + sqlFileName);
                     break;
                 }
                 case "-comments":
@@ -39,6 +41,8 @@ public class Main {
                     //next is comments fileName
                     i++;
                     commentFileName = args[i];
+                    System.out.println("Doc comment output file name: " +
+                            commentFileName);
                     break;
                 }
                 case "-html":
@@ -46,10 +50,12 @@ public class Main {
                     //next is html fileName
                     i++;
                     htmlFileName = args[i];
+                    System.out.println("HTML Documentation " +
+                            "output file name: " + htmlFileName);
                     break;
                 }
                 default: {
-                    System.out.println("Invalid option: " + args[i]);
+                    System.err.println("Invalid option: " + args[i]);
                     System.exit(-1);
                 }
             }
@@ -59,12 +65,11 @@ public class Main {
             /*main -comments fileWithComments.sql -html file.html
             takes fileWithComments (which MUST have docComments) and output file.html with HTML docs*/
 
-            ArrayList<DocComment> docComments = parseDocComments(commentFileName);
+            ArrayList<DocComment> docComments = linesToDocComments(commentFileName);
 
             //generate HTML
             //write HTML to htmlFileName
             outputToHTML(docComments, htmlFileName);
-
 
         } else if (commentFileName.equals("docCommentOutput.sql")) {
             /*main -sql file.sql -html file.html
@@ -73,18 +78,29 @@ public class Main {
 
             //read from sqlFileName
             //parse SQL into Sprocs
+            ArrayList<Sproc> sprocs = linesToSprocs(sqlFileName);
+
             //generate DocComments (for those Sprocs where it is necessary)
-            //generate HTML
+            ArrayList<DocComment> docComments = sprocsToDocComments(sprocs);
+
             //write HTML to htmlFileName
+            outputToHTML(docComments, htmlFileName);
+
             System.err.println("Not supported yet");
         } else if (htmlFileName.equals("docOutput.html")) {
             /*main -sql file.sql -comments fileWithComments.sql
-            takes file.sql (which has sproc code (docComments or not)) and output fileWithComments.sql with docComments for all sprocs*/
-
+            takes file.sql (which has sproc code (docComments or not)) and output
+             fileWithComments.sql with docComments for all sprocs*/
+            System.out.println("yyyyes");
             //read from sqlFileName
             //parse SQL into Sprocs
+            ArrayList<Sproc> sprocs = linesToSprocs(sqlFileName);
+
             //generate DocComments (for those Sprocs where it is necessary)
-            //write DocComments to commentFileName
+            ArrayList<DocComment> docComments = sprocsToDocComments(sprocs);
+
+            //write DocComments and SQL code to commentFileName
+            outputToSQL(docComments, sqlFileName, commentFileName);
             System.err.println("Not supported yet");
         } else {
             /*main -sql file.sql -comments fileWithComments.sql -html file.html
@@ -93,10 +109,16 @@ public class Main {
 
             //read sqlFileName
             //parse SQL into Sprocs
+            ArrayList<Sproc> sprocs = linesToSprocs(sqlFileName);
+
             //generate DocComments (for those Sprocs where it is necessary)
+            ArrayList<DocComment> docComments = sprocsToDocComments(sprocs);
+
             //write DocComments to commentFileName
-            //generate HTML
+            outputToSQL(docComments, sqlFileName, commentFileName);
+
             //write HTML to htmlFileName
+            outputToHTML(docComments, htmlFileName);
             System.err.println("Not supported yet");
         }
     }
@@ -105,7 +127,8 @@ public class Main {
      * Reads from the .sql file with comments and parses the text into
      * <code>{@link DocComment}</code>s
      */
-    public static ArrayList<DocComment> parseDocComments(String commentFileName) {
+    private static ArrayList<DocComment> linesToDocComments(String
+                                                                    commentFileName) {
         ArrayList<DocComment> docComments = new ArrayList<>();
 
         //read from commentFileName
@@ -249,4 +272,96 @@ public class Main {
 
     }
 
+    /**
+     * Reads the .sql file and generates an <code>{@link ArrayList}</code> of
+     * <code>{@link Sproc}</code> objects
+     *
+     * @param sqlFileName file with stored procedure/function code
+     * @return ArrayList<Sproc>
+     */
+    private static ArrayList<Sproc> linesToSprocs(String sqlFileName) {
+        System.out.println("Parsing stored function and procedure code into " +
+                "Sprocs. . .");
+        ArrayList<Sproc> sprocs = new ArrayList<>();
+
+        Scanner inFile = null;
+        try {
+            //open file
+            System.out.print("\tOpening '" + sqlFileName + "'. . .");
+            inFile = new Scanner(new File(sqlFileName));
+        } catch (FileNotFoundException fnf) {
+            System.out.println("The file '" + sqlFileName + "' was not found");
+            System.exit(-1);
+        }
+        System.out.println("Done");
+
+        ArrayList<String> sprocLines = null;
+        boolean addToLines = false;
+        int count = 0;
+
+        while (inFile.hasNext()) {
+            String line = inFile.nextLine();
+
+            if (line.startsWith("CREATE")) {
+                //start of procedure declaration
+                sprocLines = new ArrayList<>();
+                addToLines = true;
+            } else if (line.endsWith("END ;;")) {
+                addToLines = false;
+                count++;
+
+                Sproc sproc = Sproc.linesToSproc(sprocLines);
+                sprocs.add(sproc);
+
+                //System.out.println("\t"+count +" " + sproc.getName());
+            }
+
+            if (addToLines) {
+                sprocLines.add(line.trim());
+            }
+        }
+
+        System.out.print("\tClosing '" + sqlFileName + "'. . .");
+        inFile.close();
+        System.out.println("Done");
+        System.out.println("Done");
+        return sprocs;
+    }
+
+    /**
+     * Generates an <code>{@link ArrayList}</code> of
+     * <code>{@link DocComment}</code> objects from the given <code>{@link
+     * ArrayList}</code> of
+     * * <code>{@link Sproc}</code>s.
+     * <p>
+     * More accurately, it generates DocComments for those Sprocs that do not
+     * have DocComments, and then creates an ArrayList of DocComments from the
+     * ArrayList of Sprocs/
+     *
+     * @param sprocs ArrayList<Sproc>
+     * @return ArrayList<DocComments>
+     */
+    private static ArrayList<DocComment> sprocsToDocComments
+    (ArrayList<Sproc> sprocs) {
+        System.err.println("Main.sprocsToDocComments has not " +
+                "been implemented yet");
+        return null;
+    }
+
+    /**
+     * Writes the DocComments and SQL code for the sprocs (from sqlFileName) to
+     * commentFileName
+     *
+     * @param docComments     docComments to write to file
+     * @param sqlFileName     file to read SQL code from
+     * @param commentFileName file to write DocComments and SQL sproc code to.
+     */
+    private static void outputToSQL(ArrayList<DocComment> docComments,
+                                    String sqlFileName,
+                                    String commentFileName) {
+        //read sqlFileName into ArrayList first, because we might be writing
+        // to sqlFileName as well.
+        System.err.println("Main.outputToSQL has not " +
+                "been implemented yet");
+    }
 }
